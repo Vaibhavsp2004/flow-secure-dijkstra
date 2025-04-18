@@ -1,5 +1,5 @@
 
-import { Node as FlowNode, Edge as FlowEdge } from '@xyflow/react';
+import { Node as FlowNode, Edge as FlowEdge, MarkerType } from '@xyflow/react';
 import { Node, Edge, Graph } from './dijkstra';
 
 // Mapping of node types to icon classes
@@ -62,9 +62,7 @@ export const graphToFlowEdges = (graph: Graph): FlowEdge[] => {
       label: `${edge.type} (${edge.weight})`,
       type: 'step',
       markerEnd: {
-        type: 'arrow',
-        width: 15,
-        height: 15
+        type: MarkerType.Arrow
       }
     };
   });
