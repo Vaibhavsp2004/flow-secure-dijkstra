@@ -1,6 +1,6 @@
-
 import React, { useCallback, useEffect, useState } from 'react';
-import ReactFlow, {
+import {
+  ReactFlow,
   Background,
   Controls,
   Edge,
@@ -10,6 +10,7 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
   useReactFlow,
+  BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { toast } from 'sonner';
@@ -444,7 +445,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
           minZoom={0.2}
           maxZoom={2}
         >
-          <Background color="#444" variant="dots" />
+          <Background color="#444" variant="dots" style={{ backgroundSize: '8px 8px' }} />
           <Controls />
         </ReactFlow>
       </div>

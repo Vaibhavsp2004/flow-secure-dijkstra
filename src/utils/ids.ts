@@ -1,4 +1,3 @@
-
 // Intrusion Detection System simulation
 
 import { Node } from './dijkstra';
@@ -14,10 +13,10 @@ export interface IDSAlert {
 // Generate a random IDS alert for a node
 export const generateRandomAlert = (nodeId: string): IDSAlert => {
   const alertTypes = [
-    { severity: 'low', message: 'Unusual network traffic detected' },
-    { severity: 'medium', message: 'Multiple failed authentication attempts' },
-    { severity: 'high', message: 'Potential data exfiltration detected' },
-    { severity: 'critical', message: 'System compromise detected' }
+    { severity: 'low' as const, message: 'Unusual network traffic detected' },
+    { severity: 'medium' as const, message: 'Multiple failed authentication attempts' },
+    { severity: 'high' as const, message: 'Potential data exfiltration detected' },
+    { severity: 'critical' as const, message: 'System compromise detected' }
   ];
   
   const alertType = alertTypes[Math.floor(Math.random() * alertTypes.length)];
