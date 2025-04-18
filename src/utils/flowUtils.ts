@@ -15,7 +15,7 @@ export const graphToFlowNodes = (graph: Graph): FlowNode[] => {
   return graph.nodes.map(node => {
     // Determine node icon based on type
     const getNodeIconClass = () => {
-      return nodeIconClasses[node.type] || nodeIconClasses.server;
+      return nodeIconClasses[node.type as keyof typeof nodeIconClasses] || nodeIconClasses.server;
     };
 
     return {

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   ReactFlow,
@@ -36,6 +37,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [activeNodeIndex, setActiveNodeIndex] = useState(-1);
   const [showPacketAnimation, setShowPacketAnimation] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0);
 
   const {
     currentPath,
@@ -54,6 +56,14 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     onIdsAlert
   });
 
+  // Initialize nodes and edges from the graph
+  useEffect(() => {
+    const flowNodes = graphToFlowNodes(initialGraph);
+    const flowEdges = graphToFlowEdges(initialGraph);
+    setNodes(flowNodes);
+    setEdges(flowEdges);
+  }, [initialGraph, setNodes, setEdges]);
+
   // Update nodes when path changes
   useEffect(() => {
     if (currentPath.length > 0 && simulationStep === 3) {
@@ -61,11 +71,13 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
         setActiveNodeIndex(prev => {
           if (prev + 1 >= currentPath.length) {
             clearInterval(interval);
+            setShowPacketAnimation(false);
             return -1;
           }
           const nodeId = currentPath[prev + 1];
           onNodeVisit(nodeId);
           setShowPacketAnimation(true);
+          setAnimationKey(prev => prev + 1);
           return prev + 1;
         });
       }, 1000);
@@ -107,6 +119,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
           <Controls />
           {showPacketAnimation && activeNodeIndex >= 0 && activeNodeIndex < currentPath.length - 1 && (
             <PacketAnimation
+              key={animationKey}
               sourceX={nodes.find(n => n.id === currentPath[activeNodeIndex])?.position.x || 0}
               sourceY={nodes.find(n => n.id === currentPath[activeNodeIndex])?.position.y || 0}
               targetX={nodes.find(n => n.id === currentPath[activeNodeIndex + 1])?.position.x || 0}
