@@ -75,8 +75,8 @@ const PacketAnimation = ({ sourceX, sourceY, targetX, targetY, isActive }: Packe
 
   return (
     <div style={style} className="pointer-events-none z-50">
-      <div className="bg-primary/20 p-1 rounded-full animate-pulse">
-        <PackageIcon className="w-8 h-8 text-primary animate-bounce neon-primary" />
+      <div className="bg-primary/50 p-2 rounded-full animate-pulse shadow-glow">
+        <PackageIcon className="w-10 h-10 text-primary animate-bounce neon-primary" />
       </div>
     </div>
   );

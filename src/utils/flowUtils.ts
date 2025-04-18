@@ -60,7 +60,7 @@ export const graphToFlowEdges = (graph: Graph): FlowEdge[] => {
       style: getEdgeStyle(),
       animated: false,
       label: `${edge.type} (${edge.weight})`,
-      type: 'step',
+      type: 'smoothstep',
       markerEnd: {
         type: MarkerType.Arrow
       }

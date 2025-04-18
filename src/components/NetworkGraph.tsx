@@ -8,7 +8,8 @@ import {
   useEdgesState,
   useNodesState,
   Node,
-  Edge
+  Edge,
+  MarkerType
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './NetworkNode';
@@ -58,10 +59,16 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
 
   // Initialize nodes and edges from the graph
   useEffect(() => {
+    console.log("Initializing graph with nodes:", initialGraph.nodes.length);
     const flowNodes = graphToFlowNodes(initialGraph);
     const flowEdges = graphToFlowEdges(initialGraph);
-    setNodes(flowNodes);
-    setEdges(flowEdges);
+    
+    // Set a timeout to ensure ReactFlow is mounted
+    setTimeout(() => {
+      setNodes(flowNodes);
+      setEdges(flowEdges);
+      console.log("Nodes set:", flowNodes.length);
+    }, 100);
   }, [initialGraph, setNodes, setEdges]);
 
   // Update nodes when path changes
@@ -97,15 +104,20 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     })));
   }, [activeNodeIndex, currentPath, setNodes]);
 
+  // Add nodeTypes object
+  const nodeTypes = {
+    customNode: CustomNode
+  };
+
   return (
     <div className="w-full h-full">
-      <div className="h-[calc(100%-60px)]">
+      <div className="h-[calc(100%-60px)] border border-gray-500">
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          nodeTypes={{ customNode: CustomNode }}
+          nodeTypes={nodeTypes}
           fitView
           minZoom={0.2}
           maxZoom={2}

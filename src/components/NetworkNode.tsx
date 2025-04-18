@@ -21,7 +21,7 @@ const nodeIconMap = {
   iot: WifiIcon
 };
 
-const NetworkNode = ({ data, selected }: { data: NodeData; selected: boolean }) => {
+const NetworkNode = ({ data }: { data: NodeData }) => {
   const { label, iconClass, isCompromised, isSender, isReceiver, nodeType, isActive } = data;
   const NodeIcon = nodeIconMap[nodeType as keyof typeof nodeIconMap] || ServerIcon;
 
@@ -29,12 +29,11 @@ const NetworkNode = ({ data, selected }: { data: NodeData; selected: boolean }) 
     <div
       className={cn(
         "flex flex-col items-center justify-center p-2 rounded-xl border relative transition-all duration-300",
-        isCompromised ? "border-red-500" : selected ? "border-blue-500" : "border-gray-600",
+        isCompromised ? "border-red-500" : "border-gray-600",
         isCompromised ? "animate-pulse bg-opacity-20 bg-red-900" : "",
-        isActive ? "ring-4 ring-primary ring-opacity-50" : ""
+        isActive ? "ring-4 ring-primary ring-opacity-50" : "",
+        "bg-gray-800 shadow-lg min-w-[120px] min-h-[120px]"
       )}
-      data-tooltip-id="node-tooltip"
-      data-tooltip-content={`${nodeType.toUpperCase()} Node: ${label}`}
     >
       <Handle
         type="target"

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -157,6 +158,10 @@
 
 .neon-red {
   filter: drop-shadow(0 0 5px theme('colors.red.500'));
+}
+
+.shadow-glow {
+  box-shadow: 0 0 15px 5px rgba(155, 135, 245, 0.6);
 }
 
 @keyframes movePacket {
