@@ -1,20 +1,27 @@
-
 import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
-import { LockIcon, ShieldAlertIcon } from 'lucide-react';
+import { ComputerIcon, ServerIcon, RouterIcon, WifiIcon, LockIcon, ShieldAlertIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface NodeData {
   label: string;
-  icon: React.ReactNode;
+  iconClass: string;
   isCompromised?: boolean;
   isSender?: boolean;
   isReceiver?: boolean;
   nodeType: string;
 }
 
+const nodeIconMap = {
+  server: ServerIcon,
+  computer: ComputerIcon,
+  router: RouterIcon,
+  iot: WifiIcon
+};
+
 const NetworkNode = ({ data, selected }: { data: NodeData; selected: boolean }) => {
-  const { label, icon, isCompromised, isSender, isReceiver, nodeType } = data;
+  const { label, iconClass, isCompromised, isSender, isReceiver, nodeType } = data;
+  const NodeIcon = nodeIconMap[nodeType as keyof typeof nodeIconMap] || ServerIcon;
 
   return (
     <div
@@ -39,7 +46,7 @@ const NetworkNode = ({ data, selected }: { data: NodeData; selected: boolean }) 
             isSender ? "bg-green-900/30" : isReceiver ? "bg-blue-900/30" : "bg-gray-800/50",
             isCompromised ? "neon-red" : isSender ? "neon-green" : isReceiver ? "neon-primary" : ""
           )}>
-            {icon}
+            <NodeIcon className={iconClass} />
           </div>
           
           <div className="text-xs font-medium text-gray-300 max-w-[80px] truncate text-center">

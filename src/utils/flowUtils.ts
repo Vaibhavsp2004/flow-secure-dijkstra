@@ -1,25 +1,21 @@
 
 import { Node as FlowNode, Edge as FlowEdge } from '@xyflow/react';
 import { Node, Edge, Graph } from './dijkstra';
-import { ComputerIcon, ServerIcon, RouterIcon, WifiIcon } from 'lucide-react';
+
+// Mapping of node types to icon classes
+const nodeIconClasses = {
+  server: 'w-6 h-6 text-blue-400',
+  computer: 'w-6 h-6 text-green-400',
+  router: 'w-6 h-6 text-purple-400',
+  iot: 'w-6 h-6 text-orange-400'
+};
 
 // Convert graph nodes to ReactFlow nodes
 export const graphToFlowNodes = (graph: Graph): FlowNode[] => {
   return graph.nodes.map(node => {
     // Determine node icon based on type
-    const getNodeIcon = () => {
-      switch (node.type) {
-        case 'server':
-          return <ServerIcon className="w-6 h-6 text-blue-400" />;
-        case 'computer':
-          return <ComputerIcon className="w-6 h-6 text-green-400" />;
-        case 'router':
-          return <RouterIcon className="w-6 h-6 text-purple-400" />;
-        case 'iot':
-          return <WifiIcon className="w-6 h-6 text-orange-400" />;
-        default:
-          return <ServerIcon className="w-6 h-6 text-blue-400" />;
-      }
+    const getNodeIconClass = () => {
+      return nodeIconClasses[node.type] || nodeIconClasses.server;
     };
 
     return {
@@ -28,7 +24,7 @@ export const graphToFlowNodes = (graph: Graph): FlowNode[] => {
       type: 'customNode',
       data: {
         label: node.label,
-        icon: getNodeIcon(),
+        iconClass: getNodeIconClass(),
         isCompromised: node.isCompromised || false,
         isSender: node.isSender || false,
         isReceiver: node.isReceiver || false,
