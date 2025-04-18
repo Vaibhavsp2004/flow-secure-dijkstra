@@ -1,20 +1,19 @@
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ReactFlow,
   Background,
   Controls,
-  Edge,
-  MarkerType,
+  BackgroundVariant,
   useEdgesState,
-  useNodesState,
-  BackgroundVariant
+  useNodesState
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './NetworkNode';
 import { useSimulationState } from '../hooks/useSimulationState';
 import SimulationControls from './SimulationControls';
-import { findShortestPath, Node as GraphNode, Edge as GraphEdge, Graph } from '../utils/dijkstra';
+import { Graph } from '../utils/dijkstra';
+import { graphToFlowNodes, graphToFlowEdges } from '../utils/flowUtils';
 
 interface NetworkGraphProps {
   initialGraph: Graph;
@@ -44,7 +43,13 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     nextStep,
     toggleAutoMode,
     resetSimulation
-  } = useSimulationState(graph, onPathChange);
+  } = useSimulationState({
+    graph,
+    onPathChange,
+    onNodeVisit,
+    onTransmissionComplete,
+    onIdsAlert
+  });
 
   // Initialize the graph
   useEffect(() => {

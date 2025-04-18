@@ -1,12 +1,26 @@
 
 import { useState, useCallback } from 'react';
-import { Node, Edge } from '@xyflow/react';
 import { Graph } from '../utils/dijkstra';
 import { toast } from 'sonner';
-import { isPathCompromised, generateRandomAlert } from '../utils/ids';
+import { isPathCompromised, compromiseRandomNode, generateRandomAlert } from '../utils/ids';
 import { simulateSHA256Hash } from '../utils/crypto';
+import { findShortestPath } from '../utils/dijkstra';
 
-export const useSimulationState = (graph: Graph, onPathChange: (path: string[], isCompromised: boolean) => void) => {
+interface SimulationStateProps {
+  graph: Graph;
+  onPathChange: (path: string[], isCompromised: boolean) => void;
+  onNodeVisit: (nodeId: string) => void;
+  onTransmissionComplete: (success: boolean, hash: string) => void;
+  onIdsAlert: (nodeId: string, severity: string) => void;
+}
+
+export const useSimulationState = ({
+  graph,
+  onPathChange,
+  onNodeVisit,
+  onTransmissionComplete,
+  onIdsAlert
+}: SimulationStateProps) => {
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationStep, setSimulationStep] = useState(0);
@@ -39,7 +53,7 @@ export const useSimulationState = (graph: Graph, onPathChange: (path: string[], 
         findNewPath(graph.nodes.find(n => n.isSender)!.id, graph.nodes.find(n => n.isReceiver)!.id);
       }
     }
-  }, [graph]);
+  }, [graph, onIdsAlert]);
 
   const findNewPath = useCallback((start: string, end: string) => {
     const result = findShortestPath(graph, start, end);
@@ -97,7 +111,7 @@ export const useSimulationState = (graph: Graph, onPathChange: (path: string[], 
         }
       }, currentPath.length * 1000);
     }
-  }, [currentPath, transmissionData, graph.nodes, isAutoMode, handleNodeCompromise]);
+  }, [currentPath, transmissionData, graph.nodes, isAutoMode, handleNodeCompromise, onNodeVisit, onTransmissionComplete]);
 
   const nextStep = useCallback(() => {
     if (isSimulating) {
@@ -118,7 +132,7 @@ export const useSimulationState = (graph: Graph, onPathChange: (path: string[], 
     } else {
       startSimulation();
     }
-  }, [isSimulating, simulationStep, startSimulation, simulatePacketTransmission, currentPath, graph.nodes, transmissionData]);
+  }, [isSimulating, simulationStep, startSimulation, simulatePacketTransmission, currentPath, graph.nodes, transmissionData, onTransmissionComplete]);
 
   const toggleAutoMode = useCallback(() => {
     setIsAutoMode(!isAutoMode);
