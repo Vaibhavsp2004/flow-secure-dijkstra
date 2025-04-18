@@ -1,15 +1,17 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   ReactFlow,
   Background,
   Controls,
   BackgroundVariant,
   useEdgesState,
-  useNodesState
+  useNodesState,
+  Node,
+  Edge
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './NetworkNode';
+import PacketAnimation from './PacketAnimation';
 import { useSimulationState } from '../hooks/useSimulationState';
 import SimulationControls from './SimulationControls';
 import { Graph } from '../utils/dijkstra';
@@ -32,7 +34,8 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [graph, setGraph] = useState<Graph>(initialGraph);
+  const [activeNodeIndex, setActiveNodeIndex] = useState(-1);
+  const [showPacketAnimation, setShowPacketAnimation] = useState(false);
 
   const {
     currentPath,
@@ -44,19 +47,43 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
     toggleAutoMode,
     resetSimulation
   } = useSimulationState({
-    graph,
+    graph: initialGraph,
     onPathChange,
     onNodeVisit,
     onTransmissionComplete,
     onIdsAlert
   });
 
-  // Initialize the graph
+  // Update nodes when path changes
   useEffect(() => {
-    setGraph(initialGraph);
-    setNodes(graphToFlowNodes(initialGraph));
-    setEdges(graphToFlowEdges(initialGraph));
-  }, [initialGraph, setNodes, setEdges]);
+    if (currentPath.length > 0 && simulationStep === 3) {
+      const interval = setInterval(() => {
+        setActiveNodeIndex(prev => {
+          if (prev + 1 >= currentPath.length) {
+            clearInterval(interval);
+            return -1;
+          }
+          const nodeId = currentPath[prev + 1];
+          onNodeVisit(nodeId);
+          setShowPacketAnimation(true);
+          return prev + 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [currentPath, simulationStep, onNodeVisit]);
+
+  // Update node appearance based on active state
+  useEffect(() => {
+    setNodes(nodes.map(node => ({
+      ...node,
+      data: {
+        ...node.data,
+        isActive: currentPath[activeNodeIndex] === node.id
+      }
+    })));
+  }, [activeNodeIndex, currentPath, setNodes]);
 
   return (
     <div className="w-full h-full">
@@ -78,6 +105,15 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({
             size={1}
           />
           <Controls />
+          {showPacketAnimation && activeNodeIndex >= 0 && activeNodeIndex < currentPath.length - 1 && (
+            <PacketAnimation
+              sourceX={nodes.find(n => n.id === currentPath[activeNodeIndex])?.position.x || 0}
+              sourceY={nodes.find(n => n.id === currentPath[activeNodeIndex])?.position.y || 0}
+              targetX={nodes.find(n => n.id === currentPath[activeNodeIndex + 1])?.position.x || 0}
+              targetY={nodes.find(n => n.id === currentPath[activeNodeIndex + 1])?.position.y || 0}
+              isActive={true}
+            />
+          )}
         </ReactFlow>
       </div>
       

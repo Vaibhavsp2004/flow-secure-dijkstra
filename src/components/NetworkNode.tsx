@@ -1,3 +1,4 @@
+
 import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { ComputerIcon, ServerIcon, RouterIcon, WifiIcon, LockIcon, ShieldAlertIcon } from 'lucide-react';
@@ -10,6 +11,7 @@ interface NodeData {
   isSender?: boolean;
   isReceiver?: boolean;
   nodeType: string;
+  isActive?: boolean;
 }
 
 const nodeIconMap = {
@@ -20,15 +22,16 @@ const nodeIconMap = {
 };
 
 const NetworkNode = ({ data, selected }: { data: NodeData; selected: boolean }) => {
-  const { label, iconClass, isCompromised, isSender, isReceiver, nodeType } = data;
+  const { label, iconClass, isCompromised, isSender, isReceiver, nodeType, isActive } = data;
   const NodeIcon = nodeIconMap[nodeType as keyof typeof nodeIconMap] || ServerIcon;
 
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center p-2 rounded-xl border relative",
+        "flex flex-col items-center justify-center p-2 rounded-xl border relative transition-all duration-300",
         isCompromised ? "border-red-500" : selected ? "border-blue-500" : "border-gray-600",
-        isCompromised ? "animate-pulse bg-opacity-20 bg-red-900" : ""
+        isCompromised ? "animate-pulse bg-opacity-20 bg-red-900" : "",
+        isActive ? "ring-4 ring-primary ring-opacity-50" : ""
       )}
       data-tooltip-id="node-tooltip"
       data-tooltip-content={`${nodeType.toUpperCase()} Node: ${label}`}
